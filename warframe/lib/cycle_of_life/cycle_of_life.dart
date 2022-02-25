@@ -4,7 +4,7 @@
 
 
 vivant avec moins de 2 voisins vivant -> meurt
-vivant avec 2 ou 3 vosins vivants -> vie
+vivant avec 2 ou 3 voisins vivants -> vie
 vivant 4 ou plus voisins vivant -> meurt
 mort avec 3 voisins vivant -> viez
 
@@ -14,15 +14,90 @@ mort avec 3 voisins vivant -> viez
 
 class CycleOfLife{
 
+  //? lline1line2line3.......
   final List<bool> world;
+  final int width, height;
 
-  static createWorld(int i, int j) {
-    return List<bool>.filled(i*j, false);
+  factory CycleOfLife.createWorld({int width = 0, int height = 0}) {
+    return CycleOfLife(
+      List<bool>.filled(width*height, false),
+      width,
+      height
+  );
   }
 
-  CycleOfLife(this.world);
-  
+  CycleOfLife(this.world, this.width, this.height);
 
+  void setXY(int x, int y){
+    if(  x < 0 
+      || y < 0 
+      || x >= width
+      || y >= height  
+    ) throw OutOfBoundException();
+    world[y*width+x] = true;
+  }
+  void unsetXY(int x, int y){
+    if(  x < 0 
+      || y < 0 
+      || x >= width
+      || y >= height  
+    ) throw OutOfBoundException();
+    world[y*width+x] = false;
+  }
+
+  void resolveXY(int x, int y){
+    final neighbor = getNeighbor(x, y);
+    final current = world[y*width+x];
+
+    if(current && neighbor < 2) {
+      unsetXY(x, y);
+    } else if(current && neighbor > 3) {
+      unsetXY(x, y);
+    }else if(!current && neighbor == 3){
+      setXY(x, y);
+    }
+  }
+
+  /*
+    ABC
+    DXF
+    GHI
+  */
+  int getNeighbor(int x, int y){
+    var neighbor = 0;
+    //A
+    if(x > 0 && y > 0 && world[(y-1)*width+x-1]) neighbor++;
+    //B
+    if(y > 0 && world[(y-1)*width+x]) neighbor++;
+    //C
+    if(x < width - 1 && y > 0 &&world[(y-1)*width+x+1]) neighbor++;
+    //D
+    if(x > 0 && world[(y)*width+x-1]) neighbor++;
+    //F
+    if(x < width - 1 && world[(y)*width+x+1]) neighbor++;
+    //G
+    if(x > 0 && y < height - 1 && world[(y+1)*width+x-1]) neighbor++;
+    //H
+    if(y < height - 1 && world[(y+1)*width+x]) neighbor++;
+    //I
+    if(x < width -1 && y < height - 1 && world[(y+1)*width+x+1]) neighbor++;
+
+    return neighbor;
+  }
+  
+  @override
+  String toString(){
+    StringBuffer sb = StringBuffer();
+    for(int y=0; y<height;y++){
+      for(int x=0; x<width; x++){
+        sb.write(world[y*width+x]?'1':'0');
+      }
+      sb.write('\n');
+    }
+    return sb.toString();
+  }
 
 
 }
+
+class OutOfBoundException implements Exception{}
