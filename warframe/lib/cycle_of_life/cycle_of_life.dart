@@ -15,18 +15,27 @@ mort avec 3 voisins vivant -> viez
 class CycleOfLife{
 
   //? lline1line2line3.......
-  final List<bool> world;
+  late final List<bool> world;
+  late final List<bool> stepWorld;
   final int width, height;
 
   factory CycleOfLife.createWorld({int width = 0, int height = 0}) {
     return CycleOfLife(
-      List<bool>.filled(width*height, false),
       width,
       height
-  );
+    );
   }
 
-  CycleOfLife(this.world, this.width, this.height);
+  CycleOfLife(this.width, this.height){
+    stepWorld = List<bool>.filled(width*height, false);
+    world = List<bool>.from(stepWorld);
+  }
+
+  void saveWorld(){
+    for(int i = 0; i < world.length; i++){
+      world[i] = stepWorld[i];
+    }
+  }
 
   void setXY(int x, int y){
     if(  x < 0 
@@ -34,7 +43,7 @@ class CycleOfLife{
       || x >= width
       || y >= height  
     ) throw OutOfBoundException();
-    world[y*width+x] = true;
+    stepWorld[y*width+x] = true;
   }
   void unsetXY(int x, int y){
     if(  x < 0 
@@ -42,9 +51,10 @@ class CycleOfLife{
       || x >= width
       || y >= height  
     ) throw OutOfBoundException();
-    world[y*width+x] = false;
+    stepWorld[y*width+x] = false;
   }
 
+  //resoud une case
   void resolveXY(int x, int y){
     final neighbor = getNeighbor(x, y);
     final current = world[y*width+x];
@@ -62,6 +72,11 @@ class CycleOfLife{
     ABC
     DXF
     GHI
+
+    00, 10, 20
+    01, 11, 21
+    02, 12, 22
+
   */
   int getNeighbor(int x, int y){
     var neighbor = 0;
@@ -83,6 +98,15 @@ class CycleOfLife{
     if(x < width -1 && y < height - 1 && world[(y+1)*width+x+1]) neighbor++;
 
     return neighbor;
+  }
+
+  void resolveStep(){
+    for(int y = 0; y < height; y++){
+      for(int x = 0; x < width; x++){
+        resolveXY(x, y);
+      }
+    }
+    saveWorld();
   }
   
   @override
