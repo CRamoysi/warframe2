@@ -182,6 +182,43 @@ void main(){
   );
 
 
+  test('Resoud deux tours', 
+    (){
+      /*
+        tour0
+          101
+          110
+          001
+        tour1
+          100
+          101
+          010
+        tour2
+          010
+          100
+          010
+      */
+      final expectedResult = List<bool>.filled(3*3, false);
+      expectedResult[1] = true;
+      expectedResult[3] = true;
+      expectedResult[7] = true;
+
+      final world = CycleOfLife.createWorld(width: 3, height: 3);
+      world.setXY(0, 0);
+      world.setXY(2, 0);
+      world.setXY(0, 1);
+      world.setXY(1, 1);
+      world.setXY(2, 2);
+      world.saveWorld();
+
+      world.resolveStep();
+      world.resolveStep();
+      expect(world.world, expectedResult);
+
+    }
+  );
+
+
 
 
 
