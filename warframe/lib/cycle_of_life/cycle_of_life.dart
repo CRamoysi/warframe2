@@ -102,6 +102,30 @@ class CycleOfLife{
     }
     saveWorld();
   }
+
+
+  void setupWorld({
+    String? string01,
+    List<String>? list01,
+  }){
+    if(string01 != null){
+      for(int i = 0; i < string01.length; i++){
+        if(string01[i] == '1'){
+          stepWorld[i] = true;
+        }else{
+          stepWorld[i] = false;
+        }
+      }
+    }else if(list01 != null){
+      for(int j = 0; j < list01.length; j++){
+        for(int i = 0; i < list01[j].length; i++){
+          list01[j][i] == '1'?setXY(i, j):unsetXY(i, j);
+        }
+      }
+    }
+  }
+
+
   
   @override
   String toString(){

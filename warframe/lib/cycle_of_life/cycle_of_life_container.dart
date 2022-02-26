@@ -2,14 +2,14 @@
 
 
 import 'package:flame/components.dart';
-import 'package:flutter/painting.dart';
+import 'package:flutter/material.dart';
 import 'package:warframe/cycle_of_life/cycle_of_life.dart';
 
 class CycleOfLifeContainer extends Component{
 
   final CycleOfLife cycleOfLife;
 
-  var sinceLastUpdate = 0.0;
+  var lastUpdate = DateTime.now();
 
   final alive = Paint()..color = const Color(0xFF000000);
   final dead = Paint()..color = const Color(0xFFFFFFFF);
@@ -36,11 +36,19 @@ class CycleOfLifeContainer extends Component{
           : cycleOfLife.height
         )).floorToDouble();
     caseL = Size(caseLength, caseLength);
+    
   }
 
   @override
   void render(Canvas canvas){
     super.render(canvas);
+      canvas.drawRect(
+        Offset(x0-1, y0-1) & Size(width.toDouble()+2, height.toDouble()+2),
+        Paint()..style = PaintingStyle.stroke
+               ..color = Colors.black
+      );
+
+
       for(double j = 0; j < cycleOfLife.height; j++){
         for(double i = 0; i < cycleOfLife.width; i++){
           canvas.drawRect(
@@ -55,11 +63,12 @@ class CycleOfLifeContainer extends Component{
 
   @override
   void update(double dt) {
-    print("update $sinceLastUpdate");
-    if(sinceLastUpdate > 10){
+    
+    final current = DateTime.now();
+      
+    if(current.difference(lastUpdate).inMilliseconds >  100){
       cycleOfLife.resolveStep();
-    }else{
-      sinceLastUpdate += dt;
+      lastUpdate = current;
     }
   }
 
