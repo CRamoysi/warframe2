@@ -181,7 +181,6 @@ void main(){
     }
   );
 
-
   test('Resoud deux tours', 
     (){
       /*
@@ -217,9 +216,4 @@ void main(){
 
     }
   );
-
-
-
-
-
 }
